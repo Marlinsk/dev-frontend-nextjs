@@ -1,22 +1,39 @@
 import { Suspense } from 'react'
 import { ProductCatalog } from '@/modules/products/ui/components'
 import { ProductCatalogSkeleton } from '@/modules/products/ui/loading'
+import { getQueryClient } from '@/function/get-query-client'
+import { fetchGetAllProducts } from '@/modules/products/http/products/list'
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 /**
  * Página inicial da aplicação (Home)
  *
- * Utiliza o padrão de Suspense do React para:
- * - Mostrar skeleton enquanto ProductCatalog carrega dados
- * - ProductCatalog usa useSuspenseQuery que suspende durante fetch
- * - Fallback (ProductCatalogSkeleton) é exibido automaticamente durante suspensão
+ * Estratégia de Server-Side Rendering (SSR) + Suspense:
+ * 1. Faz prefetch dos produtos no servidor
+ * 2. Hidrata o estado do TanStack Query no cliente via HydrationBoundary
+ * 3. ProductCatalog usa useSuspenseQuery que:
+ *    - Consome dados do cache instantaneamente (sem suspender)
+ *    - Se cache vazio, suspende e mostra ProductCatalogSkeleton
  *
- * Este padrão elimina a necessidade de gerenciar estados de loading manualmente
- * dentro do componente ProductCatalog.
+ * Benefícios:
+ * - Dados carregados no servidor (melhor SEO)
+ * - Primeira renderização já contém produtos (cache prefetch)
+ * - Fallback elegante caso cache não esteja disponível
+ * - Integração nativa com modelo de Suspense do React
  */
-export default function Home() {
+export default async function Home() {
+  const queryClient = getQueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ['products'],
+    queryFn: () => fetchGetAllProducts(),
+  })
+
   return (
-    <Suspense fallback={<ProductCatalogSkeleton />}>
-      <ProductCatalog />
-    </Suspense>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<ProductCatalogSkeleton />}>
+        <ProductCatalog />
+      </Suspense>
+    </HydrationBoundary>
   )
 }

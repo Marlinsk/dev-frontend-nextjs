@@ -1,26 +1,46 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 import { ProductSearch } from '../../product-search'
 import { CategoryFilter } from '../../category-filter'
-import { Product } from '../../../../types/product'
+import { fetchGetAllProducts } from '@/modules/products/http/products/list'
 
 interface ProductFiltersProps {
-  products: Product[];
   searchQuery: string;
   selectedCategory: string;
-  onSearchChange: (value: string) => void;
   onCategoryChange: (value: string) => void;
 }
 
+/**
+ * Componente de filtros de produtos
+ *
+ * Usa useQuery independente para buscar produtos sem depender do ProductCatalog
+ * Filtra produtos por categoria antes de passar para ProductSearch (sugestões)
+ */
 function ProductFiltersComponent(props: ProductFiltersProps) {
+  // useQuery independente para sugestões de busca
+  // Usa cache compartilhado com ProductCatalog ['products']
+  const { data: allProducts = [] } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => fetchGetAllProducts(),
+  })
+
+  // Filtra produtos por categoria para sugestões de busca
+  // Sugestões devem respeitar a categoria selecionada
+  const filteredProductsForSuggestions = useMemo(() => {
+    if (props.selectedCategory === 'all') {
+      return allProducts
+    }
+    return allProducts.filter((product) => product.category === props.selectedCategory)
+  }, [allProducts, props.selectedCategory])
+
   return (
     <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
       <ProductSearch
-        products={props.products}
+        products={filteredProductsForSuggestions}
         value={props.searchQuery}
-        onValueChange={props.onSearchChange}
       />
       <CategoryFilter
         value={props.selectedCategory}
