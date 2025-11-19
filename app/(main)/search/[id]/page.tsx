@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
-import { ProductCatalog, ProductListSkeleton } from '@/modules/products/ui/components'
+import { ProductCatalog } from '@/modules/products/ui/components'
+import { ProductCatalogSkeleton } from '@/modules/products/ui/loading';
 
 interface SearchUrlParams {
   q: string;
@@ -10,7 +11,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   const query = params.q || '';
   
   return (
-    <Suspense fallback={<ProductListSkeleton />}>
+    <Suspense fallback={<ProductCatalogSkeleton />}>
       <ProductCatalog
         initialSearchQuery={query}
         title="Resultados da busca"
