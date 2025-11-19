@@ -18,12 +18,16 @@ interface CategoryFilterProps {
 }
 
 function CategoryFilterComponent({ value, onValueChange }: CategoryFilterProps) {
+  const selectedLabel = CATEGORIES.find(cat => cat.value === value)?.label || 'Filtrar por categoria'
+
   return (
     <div className="w-full sm:w-64">
       <Select value={value} onValueChange={onValueChange}>
         <SelectTrigger>
           <Filter className="h-4 w-4 mr-2" />
-          <SelectValue placeholder="Filtrar por categoria" />
+          <SelectValue>
+            {selectedLabel}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           {CATEGORIES.map((category) => (
