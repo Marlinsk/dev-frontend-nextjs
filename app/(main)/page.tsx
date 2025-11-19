@@ -14,15 +14,8 @@ import { ProductCatalog, ProductListSkeleton } from '@/modules/products/ui/compo
  */
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans">
-      <div className="mx-auto max-w-7xl p-6">
-        <div className="flex min-h-screen flex-col">
-          {/* Suspense boundary: captura suspensões de componentes filhos */}
-          <Suspense fallback={<ProductListSkeleton />}>
-            <ProductCatalog />
-          </Suspense>
-        </div>
-      </div>
-    </div>
+    <Suspense fallback={<ProductListSkeleton />}>
+      <ProductCatalog />
+    </Suspense>
   )
 }
