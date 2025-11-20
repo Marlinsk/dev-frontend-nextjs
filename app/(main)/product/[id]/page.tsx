@@ -1,18 +1,29 @@
+import { Suspense } from "react";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+
+import { getQueryClient } from "@/function/get-query-client";
+import { fetchGetProductById } from "@/modules/products/http/products/get";
+import { ProductDetails } from "@/modules/products/ui/components/product-details";
+import { ProductDetailsSkeleton } from "@/modules/products/ui/loading";
+
 interface ProductDetailsPageParams {
   params: Promise<{ id: string }>;
 }
 
 export default async function ProductDetailsPage({ params }: ProductDetailsPageParams) {
   const { id } = await params;
+  const queryClient = getQueryClient();
+  
+  await queryClient.prefetchQuery({
+    queryKey: ['products', id],
+    queryFn: () => fetchGetProductById(Number(id)),
+  });
 
   return (
-    <div className="text-center py-20">
-      <h1 className="text-3xl font-bold text-zinc-900">
-        Produto ID: {id}
-      </h1>
-      <p className="text-zinc-600 mt-4">
-        Página de detalhes do produto em construção
-      </p>
-    </div>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense fallback={<ProductDetailsSkeleton />}>
+        <ProductDetails productId={Number(id)} />
+      </Suspense>
+    </HydrationBoundary>
   )
 }
