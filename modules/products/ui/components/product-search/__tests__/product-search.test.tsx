@@ -21,8 +21,6 @@ jest.mock('next/navigation', () => ({
 }))
 
 describe('ProductSearch', () => {
-  const mockOnValueChange = jest.fn()
-
   beforeEach(() => {
     jest.clearAllMocks()
     mockGet.mockReturnValue('')
@@ -33,7 +31,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -46,7 +43,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
         placeholder={customPlaceholder}
       />
     )
@@ -59,7 +55,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -76,7 +71,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -92,7 +86,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -109,7 +102,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -120,7 +112,6 @@ describe('ProductSearch', () => {
     await user.click(clearButton)
 
     expect(input).toHaveValue('')
-    expect(mockOnValueChange).toHaveBeenCalledWith('')
   })
 
   it('should handle controlled value prop changes', () => {
@@ -128,7 +119,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -139,7 +129,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value="new value"
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -151,7 +140,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -164,7 +152,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
       />
     )
 
@@ -180,7 +167,6 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
         minSearchLength={3}
       />
     )
@@ -193,8 +179,45 @@ describe('ProductSearch', () => {
       <ProductSearch
         products={mockProducts}
         value=""
-        onValueChange={mockOnValueChange}
         maxSuggestions={5}
+      />
+    )
+
+    expect(screen.getByPlaceholderText('Buscar produtos...')).toBeInTheDocument()
+  })
+
+  it('should navigate to search page when search button is clicked', async () => {
+    const user = userEvent.setup()
+    renderWithProviders(
+      <ProductSearch
+        products={mockProducts}
+        value=""
+      />
+    )
+
+    const input = screen.getByPlaceholderText('Buscar produtos...')
+    await user.type(input, 'phone')
+
+    const searchButton = screen.getByLabelText('Buscar')
+    await user.click(searchButton)
+
+    expect(mockPush).toHaveBeenCalled()
+    expect(mockPush).toHaveBeenCalledWith(expect.stringContaining('phone'))
+  })
+
+  it('should clear cache when products prop changes', () => {
+    const { rerender } = renderWithProviders(
+      <ProductSearch
+        products={mockProducts}
+        value=""
+      />
+    )
+
+    // Mudar produtos deve limpar o cache de sugestões
+    rerender(
+      <ProductSearch
+        products={mockProducts.slice(0, 5)}
+        value=""
       />
     )
 

@@ -5,8 +5,6 @@ import { API_BASE_URL } from "@/constants"
 import { ProductsFetchError } from "../../common/products-fetch-error"
 import { formatValidationErrors } from "@/helpers/format-validation-errors"
 
-const PRODUCTS_LIST_ENDPOINT = `${API_BASE_URL}/products`
-
 // Schema para validar um array de produtos retornado pela API
 const productsListSchema = z.array(productItemSchema)
 
@@ -82,11 +80,12 @@ function validateProductsDataList(data: unknown): Product[] {
 
 /**
  * Realiza a requisição HTTP para buscar a lista de produtos
+ * @param searchQuery - Termo de busca opcional para filtrar produtos
  * @returns Promise com os dados brutos (não validados) da resposta JSON
  * @throws {ProductsFetchError} Se a resposta não for OK (status 200-299)
  */
-async function fetchProductsList(): Promise<unknown> {
-  const response = await fetch(PRODUCTS_LIST_ENDPOINT, {
+async function fetchProductsList(searchQuery?: string): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/products`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -96,7 +95,21 @@ async function fetchProductsList(): Promise<unknown> {
     handleHttpError(response);
   }
 
-  return response.json();
+  const data = await response.json();
+
+  // Se não houver busca, retorna todos os produtos
+  if (!searchQuery || !searchQuery.trim()) {
+    return data;
+  }
+
+  // Filtra produtos no servidor baseado no termo de busca
+  const searchTerm = searchQuery.toLowerCase().trim();
+  return (data as Product[]).filter((product) => {
+    const titleMatch = product.title.toLowerCase().includes(searchTerm);
+    const categoryMatch = product.category.toLowerCase().includes(searchTerm);
+    const descriptionMatch = product.description.toLowerCase().includes(searchTerm);
+    return titleMatch || categoryMatch || descriptionMatch;
+  });
 }
 
 /**
@@ -104,16 +117,18 @@ async function fetchProductsList(): Promise<unknown> {
  *
  * Fluxo de execução:
  * 1. Faz a requisição HTTP
- * 2. Valida os dados retornados com Zod
- * 3. Retorna array de produtos tipados
- * 4. Trata qualquer erro que ocorra no processo
+ * 2. Filtra produtos se searchQuery for fornecido (server-side)
+ * 3. Valida os dados retornados com Zod
+ * 4. Retorna array de produtos tipados
+ * 5. Trata qualquer erro que ocorra no processo
  *
+ * @param searchQuery - Termo de busca opcional para filtrar produtos no servidor
  * @returns Promise<Product[]> Lista de produtos validada e tipada
  * @throws {ProductsFetchError} Em caso de erro HTTP, validação ou rede
  */
-export async function fetchGetAllProducts(): Promise<Product[]> {
+export async function fetchGetAllProducts(searchQuery?: string): Promise<Product[]> {
   try {
-    const data = await fetchProductsList()
+    const data = await fetchProductsList(searchQuery)
     return validateProductsDataList(data)
   } catch (error) {
     handleNetworkError(error)

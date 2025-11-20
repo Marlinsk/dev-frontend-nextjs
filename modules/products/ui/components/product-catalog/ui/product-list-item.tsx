@@ -1,5 +1,7 @@
 import { memo } from 'react'
+import Link from 'next/link'
 import Image from 'next/image'
+
 import { Product } from '../../../../types/product'
 
 interface ProductListItemProps {
@@ -8,7 +10,10 @@ interface ProductListItemProps {
 
 function ProductListItemComponent({ product }: ProductListItemProps) {
   return (
-    <div className="group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg">
+    <Link
+      href={`/product/${product.id}`}
+      className="group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
+    >
       <div className="relative aspect-square w-full overflow-hidden bg-muted">
         <Image
           src={product.image}
@@ -40,7 +45,7 @@ function ProductListItemComponent({ product }: ProductListItemProps) {
           </span>
         </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

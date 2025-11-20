@@ -14,7 +14,6 @@ import { Button } from '@/components/ui/button'
 interface ProductSearchProps {
   products: Product[];
   value: string;
-  onValueChange: (value: string) => void;
   placeholder?: string;
   minSearchLength?: number;
   maxSuggestions?: number;
@@ -23,7 +22,6 @@ interface ProductSearchProps {
 function ProductSearchComponent({
   products,
   value,
-  onValueChange,
   placeholder = 'Buscar produtos...',
   minSearchLength = 2,
   maxSuggestions = 10,
@@ -39,9 +37,19 @@ function ProductSearchComponent({
 
   const debouncedInputValue = useDebounce(inputValue, 350)
 
+  // Limpa cache de sugestões quando a lista de produtos muda
+  // Isso garante que mudanças de categoria sejam refletidas nas sugestões
   useEffect(() => {
-    setInputValue(value)
-  }, [value])
+    suggestionsCache.current.clear()
+  }, [products])
+
+  // Sincroniza inputValue com prop value apenas quando value muda externamente
+  // e é diferente do inputValue atual (evita loops)
+  useEffect(() => {
+    if (value !== inputValue) {
+      setInputValue(value)
+    }
+  }, [value]) // Não inclui inputValue na dependência para evitar loops
 
   const suggestions = useMemo(() => {
     const trimmedValue = debouncedInputValue.trim()
@@ -125,11 +133,12 @@ function ProductSearchComponent({
 
   const handleClear = useCallback(() => {
     setInputValue('')
-    onValueChange('')
+    // NÃO chama onValueChange - apenas limpa o campo visualmente
+    // A lista só deve atualizar quando o usuário clicar em buscar ou Enter
     setOpen(false)
     isTyping.current = false
     inputRef.current?.focus()
-  }, [onValueChange])
+  }, [])
 
   const handleInputFocus = useCallback(() => {
     const trimmedValue = inputValue.trim()
