@@ -101,7 +101,7 @@ function ProductSearchComponent({
     inputRef.current?.blur()
 
     // Redireciona para a página de detalhes do produto
-    router.push(`/product/${product.id}`)
+    router.push(`/product/${product.id}/details`)
   }, [router])
 
   const handleSearch = useCallback(() => {
