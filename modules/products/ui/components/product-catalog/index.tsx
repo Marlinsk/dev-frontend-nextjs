@@ -1,14 +1,13 @@
 'use client'
 
 import { useCallback, useMemo, useState, useTransition, useDeferredValue } from 'react'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { useRouter, useSearchParams } from 'next/navigation'
 
-import { fetchGetAllProducts } from '@/modules/products/http/products/list'
 import { EmptyState } from '../../states/empty-state'
 import { ProductsHeader } from '../products-header'
 import { ProductsGrid } from '../../containers/products-grid'
 import { ProductFilters } from './ui/product-filters'
+import { useProductsList } from '@/modules/products/http/hooks/use-products'
 
 interface ProductCatalogProps {
   initialSearchQuery?: string;
@@ -41,10 +40,7 @@ export function ProductCatalog({ initialSearchQuery = '', initialCategory = 'all
   // useSuspenseQuery consome dados prefetch do servidor
   // Se não houver cache, suspende e mostra fallback do Suspense
   // queryKey dinâmica: inclui searchQuery para buscar cache específico da busca
-  const { data: products } = useSuspenseQuery({
-    queryKey: initialSearchQuery ? ['products', initialSearchQuery] : ['products'],
-    queryFn: () => fetchGetAllProducts(initialSearchQuery),
-  })
+  const { data: products } = useProductsList(initialSearchQuery)
 
   // Estados de filtros
   // Inicializa categoria com valor da URL

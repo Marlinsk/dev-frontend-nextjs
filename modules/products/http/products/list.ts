@@ -5,8 +5,6 @@ import { API_BASE_URL } from "@/constants"
 import { ProductsFetchError } from "../../common/products-fetch-error"
 import { formatValidationErrors } from "@/helpers/format-validation-errors"
 
-const PRODUCTS_LIST_ENDPOINT = `${API_BASE_URL}/products`
-
 // Schema para validar um array de produtos retornado pela API
 const productsListSchema = z.array(productItemSchema)
 
@@ -87,7 +85,7 @@ function validateProductsDataList(data: unknown): Product[] {
  * @throws {ProductsFetchError} Se a resposta não for OK (status 200-299)
  */
 async function fetchProductsList(searchQuery?: string): Promise<unknown> {
-  const response = await fetch(PRODUCTS_LIST_ENDPOINT, {
+  const response = await fetch(`${API_BASE_URL}/products`, {
     headers: {
       "Content-Type": "application/json",
     },

@@ -11,7 +11,7 @@ import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
  * Estratégia de Server-Side Rendering (SSR) + Suspense:
  * 1. Faz prefetch dos produtos no servidor
  * 2. Hidrata o estado do TanStack Query no cliente via HydrationBoundary
- * 3. ProductCatalog usa useSuspenseQuery que:
+ * 3. ProductCatalog usa um hook customizado com useSuspenseQuery que:
  *    - Consome dados do cache instantaneamente (sem suspender)
  *    - Se cache vazio, suspende e mostra ProductCatalogSkeleton
  *

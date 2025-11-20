@@ -17,7 +17,7 @@ interface SearchUrlParams {
  * 1. Faz prefetch dos produtos FILTRADOS no servidor
  * 2. queryKey inclui o termo de busca para cache separado por query
  * 3. Hidrata o estado do TanStack Query no cliente via HydrationBoundary
- * 4. ProductCatalog usa useSuspenseQuery que:
+ * 4. ProductCatalog usa um hook customizado com useSuspenseQuery que:
  *    - Consome dados filtrados do cache instantaneamente
  *    - Se cache vazio, suspende e mostra ProductCatalogSkeleton
  * 5. initialSearchQuery e initialCategory são lidos da URL
