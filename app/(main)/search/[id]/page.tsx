@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { ProductCatalog } from '@/modules/products/ui/components'
 import { ProductCatalogSkeleton } from '@/modules/products/ui/loading'
 import { getQueryClient } from '@/function/get-query-client'
-import { fetchGetAllProducts } from '@/modules/products/http/products/list'
+import { fetchGetAllProducts } from '@/modules/products/http/products'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 interface SearchUrlParams {
@@ -20,7 +20,7 @@ interface SearchUrlParams {
  * 4. ProductCatalog usa um hook customizado com useSuspenseQuery que:
  *    - Consome dados filtrados do cache instantaneamente
  *    - Se cache vazio, suspende e mostra ProductCatalogSkeleton
- * 5. initialSearchQuery e initialCategory são lidos da URL
+ * 5. Filtros são gerenciados pelo ProductFiltersContext no layout
  *
  * Benefícios:
  * - Filtragem no servidor (menos dados transferidos)
@@ -33,7 +33,6 @@ interface SearchUrlParams {
 export default async function SearchPage({ searchParams }: { searchParams: Promise<SearchUrlParams>; }) {
   const params = await searchParams
   const query = params.q || ''
-  const category = params.category || 'all'
 
   const queryClient = getQueryClient()
 
@@ -54,12 +53,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Suspense fallback={<ProductCatalogSkeleton />}>
-        <ProductCatalog
-          initialSearchQuery={query}
-          initialCategory={category}
-          title="Resultados da busca"
-          subtitle={query ? `Você pesquisou: ${query}` : undefined}
-        />
+        <ProductCatalog />
       </Suspense>
     </HydrationBoundary>
   )

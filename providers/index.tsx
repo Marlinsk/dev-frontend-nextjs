@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { QueryClientProvider } from "@tanstack/react-query"
 import { getQueryClient } from "@/function/get-query-client"
+import { Toaster } from "@/components/ui/sonner"
 
 /**
  * Provider global para configuração do TanStack Query
@@ -16,6 +16,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       {children}
+      <Toaster />
     </QueryClientProvider>
   )
 }

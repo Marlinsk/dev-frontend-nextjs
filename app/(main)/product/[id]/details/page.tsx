@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient } from "@/function/get-query-client";
-import { fetchGetProductById } from "@/modules/products/http/products/get";
-import { ProductDetails } from "@/modules/products/ui/components/product-details";
+import { fetchGetProductById } from "@/modules/products/http/products";
+import { ProductDetails } from "@/modules/products/ui/components";
 import { ProductDetailsSkeleton } from "@/modules/products/ui/loading";
 
 interface ProductDetailsPageParams {

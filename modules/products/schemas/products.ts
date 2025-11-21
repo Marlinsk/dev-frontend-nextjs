@@ -18,9 +18,25 @@ import { z } from 'zod'
  */
 export const productItemSchema = z.object({
   id:	z.number(),
-  title: z.string(),
-  price: z.number(),
-  description: z.string(),
-  category: z.string(),
-  image: z.string(),
+  title: z.string().min(3, 'O título deve ter no mínimo 3 caracteres').max(200, 'O título deve ter no máximo 200 caracteres'),
+  price: z.number().positive('O preço deve ser maior que zero').max(999999, 'O preço máximo é $999,999'),
+  description: z.string().min(10, 'A descrição deve ter no mínimo 10 caracteres').max(1000, 'A descrição deve ter no máximo 1000 caracteres'),
+  category: z.enum(
+    ['electronics', 'jewelery', "men's clothing", "women's clothing"],
+    { message: 'Selecione uma categoria válida' }
+  ),
+  image: z.string().url({ message: 'Informe uma URL válida para a imagem' }),
 })
+
+/**
+ * Schema para cadastro de produto
+ * Herda todos os campos do productItemSchema exceto o id
+ */
+export const productCreateSchema = productItemSchema.omit({ id: true })
+
+/**
+ * Schema para edição de produto
+ * Herda todos os campos do productItemSchema
+ */
+export const productEditSchema = productItemSchema
+
