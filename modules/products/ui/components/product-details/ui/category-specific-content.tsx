@@ -1,21 +1,29 @@
-import { memo } from "react"
-import { Button } from "@/components/ui/button"
+import { memo, useState } from "react"
+import { Toggle } from "@/components/ui/toggle"
 
 const SIZES = ['PP', 'P', 'M', 'G', 'GG', 'XGG'] as const
 
 const ClothingOptions = memo(() => {
+  const [selectedSize, setSelectedSize] = useState<string | null>(null)
+
+  const handleSizeToggle = (size: string) => {
+    setSelectedSize(prevSize => prevSize === size ? null : size)
+  }
+
   return (
     <div className="flex flex-col space-y-2">
       <h4 className="text-sm font-medium">Tamanhos disponíveis</h4>
       <div className="flex flex-wrap gap-2">
         {SIZES.map((size) => (
-          <Button
+          <Toggle
             key={size}
-            size={"icon-lg"}
-            variant={"outline"}
+            variant="outline"
+            size="lg"
+            pressed={selectedSize === size}
+            onPressedChange={() => handleSizeToggle(size)}
           >
             <p className="font-normal">{size}</p>
-          </Button>
+          </Toggle>
         ))}
       </div>
     </div>
