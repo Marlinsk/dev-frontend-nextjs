@@ -36,8 +36,8 @@ function ProductToolbarComponent() {
   }, [allProducts, selectedCategory])
 
   return (
-    <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-between w-full">
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
+    <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-between w-full">
+      <div className="flex flex-col sm:flex-row gap-3 w-full lg:max-w-3xl">
         <ProductSearch
           products={filteredProductsForSuggestions}
           value={searchQuery}
@@ -47,7 +47,9 @@ function ProductToolbarComponent() {
           onValueChange={handleCategoryChange}
         />
       </div>
-      <ProductOptionsMenu />
+      <div className="flex justify-end lg:justify-start">
+        <ProductOptionsMenu />
+      </div>
     </div>
   )
 }
