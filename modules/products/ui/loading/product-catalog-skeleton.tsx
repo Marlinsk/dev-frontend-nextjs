@@ -22,44 +22,9 @@ function ProductCardSkeleton() {
   )
 }
 
-function ProductsHeaderSkeleton() {
-  return (
-    <div className="flex flex-col space-y-2">
-      <Skeleton className="h-8 w-40" />
-      <Skeleton className="h-4 w-32" />
-    </div>
-  )
-}
-
-function ProductSearchSkeleton() {
-  return (
-    <div className="relative w-full sm:w-[420px]">
-      <Skeleton className="h-10 w-full rounded-md" />
-    </div>
-  )
-}
-
-function CategoryFilterSkeleton() {
-  return (
-    <div className="relative w-44">
-      <Skeleton className="h-10 w-full rounded-md" />
-    </div>
-  )
-}
-
 function ProductCatalogSkeleton() {
   return (
-    <div className="w-full space-y-6">
-      <div className="flex flex-col gap-4">
-        <ProductsHeaderSkeleton />
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
-          <ProductSearchSkeleton />
-          <CategoryFilterSkeleton />
-        </div>
-      </div>
-      <div className="relative w-[256px]">
-        <Skeleton className="h-4 w-full rounded-md" />
-      </div>
+    <div className="w-full">
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 12 }).map((_, index) => (
           <ProductCardSkeleton key={index} />
