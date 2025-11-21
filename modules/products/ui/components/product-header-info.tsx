@@ -49,6 +49,12 @@ function ProductHeaderInfoComponent() {
     return products.filter((product) => product.category === deferredCategory)
   }, [products, deferredCategory])
 
+  // Memoiza o texto do contador para evitar recálculos
+  const productsCountText = useMemo(() => {
+    const count = filteredProducts.length
+    return `${count} ${count === 1 ? 'produto encontrado' : 'produtos encontrados'}`
+  }, [filteredProducts.length])
+
   if (isProductDetailsPage) {
     return (
       <div className='flex justify-start'>
@@ -70,12 +76,6 @@ function ProductHeaderInfoComponent() {
       </div>
     )
   }
-
-  // Memoiza o texto do contador para evitar recálculos
-  const productsCountText = useMemo(() => {
-    const count = filteredProducts.length
-    return `${count} ${count === 1 ? 'produto encontrado' : 'produtos encontrados'}`
-  }, [filteredProducts.length])
 
   return (
     <p className="text-sm text-muted-foreground">

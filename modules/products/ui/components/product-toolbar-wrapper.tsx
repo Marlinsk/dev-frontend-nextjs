@@ -7,6 +7,7 @@ import { ProductToolbarProvider } from '@/modules/products/context'
 import { ProductToolbar } from './product-toolbar'
 import { ProductHeaderInfo } from './product-header-info'
 import { ProductToolbarSkeleton } from '../loading'
+import { Header } from './header'
 
 interface ProductToolbarWrapperProps {
   children: React.ReactNode;
@@ -33,14 +34,17 @@ export function ProductToolbarWrapper({ children }: ProductToolbarWrapperProps) 
       initialSearchQuery={searchQuery}
       initialCategory={selectedCategory}
     >
-      <div className="flex flex-col gap-6">
-        <Suspense fallback={<ProductToolbarSkeleton />}>
-          <ProductToolbar />
-        </Suspense>
-        <Suspense fallback={<Skeleton className="w-36 h-5" />}>
-          <ProductHeaderInfo />
-        </Suspense>
-        {children}
+      <div className='flex flex-col gap-8'>
+        <Header />
+        <div className="flex flex-col gap-6">
+          <Suspense fallback={<ProductToolbarSkeleton />}>
+            <ProductToolbar />
+          </Suspense>
+          <Suspense fallback={<Skeleton className="w-36 h-5" />}>
+            <ProductHeaderInfo />
+          </Suspense>
+          {children}
+        </div>
       </div>
     </ProductToolbarProvider>
   )
