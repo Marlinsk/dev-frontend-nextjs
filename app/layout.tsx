@@ -20,7 +20,7 @@ const commissioner = Commissioner({
 
 export const metadata: Metadata = {
   title: "ECO",
-  description: "E-commerce demo piece.",
+  description: "E-commerce Demo Platform.",
 };
 
 export default function RootLayout({
