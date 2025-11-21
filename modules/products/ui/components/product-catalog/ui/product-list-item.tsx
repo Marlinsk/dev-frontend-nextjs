@@ -11,7 +11,7 @@ interface ProductListItemProps {
 function ProductListItemComponent({ product }: ProductListItemProps) {
   return (
     <Link
-      href={`/product/${product.id}`}
+      href={`/product/${product.id}/details`}
       className="group relative flex flex-col overflow-hidden rounded-lg border border-border bg-card transition-shadow hover:shadow-lg"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-muted">

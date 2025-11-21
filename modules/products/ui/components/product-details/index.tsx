@@ -1,6 +1,6 @@
 'use client'
 
-import { useGetProductById } from "@/modules/products/http/hooks/use-products";
+import { useGetProductById } from "@/modules/products/http/hooks";
 import { ProductImage } from "./ui/product-image";
 import { ProductHeader } from "./ui/product-header";
 import { ProductPricing } from "./ui/product-pricing";

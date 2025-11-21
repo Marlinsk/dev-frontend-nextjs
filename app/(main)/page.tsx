@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { ProductCatalog } from '@/modules/products/ui/components'
 import { ProductCatalogSkeleton } from '@/modules/products/ui/loading'
 import { getQueryClient } from '@/function/get-query-client'
-import { fetchGetAllProducts } from '@/modules/products/http/products/list'
+import { fetchGetAllProducts } from '@/modules/products/http/products'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 /**

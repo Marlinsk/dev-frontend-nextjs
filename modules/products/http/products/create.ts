@@ -1,18 +1,18 @@
 import z from "zod"
-import { productItemSchema } from "../../schemas/products"
+import { productCreateSchema, productItemSchema } from "../../schemas/products"
 import { Product } from "../../types/product"
 import { API_BASE_URL } from "@/constants"
 import { ProductsFetchError } from "../../common/products-fetch-error"
 import { formatValidationErrors } from "@/helpers/format-validation-errors"
 
-const productsListSchema = z.array(productItemSchema)
+type ProductCreateInput = z.infer<typeof productCreateSchema>
 
 /**
  * Trata erros HTTP (4xx, 5xx) da API
  * @throws {ProductsFetchError} Sempre lança erro com status e mensagem
  */
 function handleHttpError(response: Response): never {
-  const errorMessage = `Erro ao buscar produtos: ${response.status} ${response.statusText}`
+  const errorMessage = `Erro ao criar produto: ${response.status} ${response.statusText}`
   throw new ProductsFetchError(errorMessage, response.status)
 }
 
@@ -25,7 +25,7 @@ function handleValidationError(validationError: unknown): never {
   if (validationError instanceof z.ZodError) {
     const errorDetails = formatValidationErrors(validationError)
     throw new ProductsFetchError(
-      `Dados de produtos inválidos: ${errorDetails}`,
+      `Dados de produto inválidos: ${errorDetails}`,
       undefined,
       validationError
     )
@@ -53,79 +53,82 @@ function handleNetworkError(error: unknown): never {
   }
 
   throw new ProductsFetchError(
-    'Erro inesperado ao carregar produtos',
+    'Erro inesperado ao criar produto',
     undefined,
     error
   )
 }
 
 /**
- * Valida os dados retornados pela API usando o schema Zod
- * Garante type-safety em runtime
- * @param data - Dados não tipados vindos da API
- * @returns Array de produtos validados e tipados
+ * Valida os dados de entrada antes de enviar para a API
+ * @param data - Dados do produto a serem criados
+ * @returns Dados validados
  * @throws {ProductsFetchError} Se os dados não corresponderem ao schema
  */
-function validateProductsDataList(data: unknown): Product[] {
+function validateProductCreateInput(data: ProductCreateInput): ProductCreateInput {
   try {
-    return productsListSchema.parse(data)
+    return productCreateSchema.parse(data)
   } catch (validationError) {
     handleValidationError(validationError)
   }
 }
 
 /**
- * Realiza a requisição HTTP para buscar a lista de produtos
- * @param searchQuery - Termo de busca opcional para filtrar produtos
- * @returns Promise com os dados brutos (não validados) da resposta JSON
- * @throws {ProductsFetchError} Se a resposta não for OK (status 200-299)
+ * Valida os dados retornados pela API usando o schema Zod
+ * Garante type-safety em runtime
+ * @param data - Dados não tipados vindos da API
+ * @returns Produto validado e tipado
+ * @throws {ProductsFetchError} Se os dados não corresponderem ao schema
  */
-async function fetchProductsList(searchQuery?: string): Promise<unknown> {
-  const response = await fetch(`${API_BASE_URL}/products`, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    handleHttpError(response);
+function validateProductData(data: unknown): Product {
+  try {
+    return productItemSchema.parse(data)
+  } catch (validationError) {
+    handleValidationError(validationError)
   }
-
-  const data = await response.json();
-
-  // Se não houver busca, retorna todos os produtos
-  if (!searchQuery || !searchQuery.trim()) {
-    return data;
-  }
-
-  // Filtra produtos no servidor baseado no termo de busca
-  const searchTerm = searchQuery.toLowerCase().trim();
-  return (data as Product[]).filter((product) => {
-    const titleMatch = product.title.toLowerCase().includes(searchTerm);
-    const categoryMatch = product.category.toLowerCase().includes(searchTerm);
-    const descriptionMatch = product.description.toLowerCase().includes(searchTerm);
-    return titleMatch || categoryMatch || descriptionMatch;
-  });
 }
 
 /**
- * Função principal para buscar todos os produtos da FakeStore API
+ * Realiza a requisição HTTP para criar um novo produto
+ * @param productData - Dados do produto a ser criado
+ * @returns Promise com os dados brutos (não validados) da resposta JSON
+ * @throws {ProductsFetchError} Se a resposta não for OK (status 200-299)
+ */
+async function createProductRequest(productData: ProductCreateInput): Promise<unknown> {
+  const response = await fetch(`${API_BASE_URL}/products`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(productData),
+  })
+
+  if (!response.ok) {
+    handleHttpError(response)
+  }
+
+  return await response.json()
+}
+
+/**
+ * Função principal para criar um novo produto na FakeStore API
  *
  * Fluxo de execução:
- * 1. Faz a requisição HTTP
- * 2. Filtra produtos se searchQuery for fornecido (server-side)
+ * 1. Valida os dados de entrada com Zod
+ * 2. Faz a requisição HTTP POST
  * 3. Valida os dados retornados com Zod
- * 4. Retorna array de produtos tipados
+ * 4. Retorna o produto criado tipado
  * 5. Trata qualquer erro que ocorra no processo
  *
- * @param searchQuery - Termo de busca opcional para filtrar produtos no servidor
- * @returns Promise<Product[]> Lista de produtos validada e tipada
+ * @param productData - Dados do produto a ser criado (sem id)
+ * @returns Promise<Product> Produto criado validado e tipado
  * @throws {ProductsFetchError} Em caso de erro HTTP, validação ou rede
  */
-export async function fetchGetAllProducts(searchQuery?: string): Promise<Product[]> {
+export async function fetchCreateProduct(productData: ProductCreateInput): Promise<Product> {
   try {
-    const data = await fetchProductsList(searchQuery)
-    return validateProductsDataList(data)
+    const validatedInput = validateProductCreateInput(productData)
+    const data = await createProductRequest(validatedInput)
+    return validateProductData(data)
   } catch (error) {
     handleNetworkError(error)
   }

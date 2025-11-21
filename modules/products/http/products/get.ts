@@ -7,7 +7,7 @@ import { formatValidationErrors } from "@/helpers/format-validation-errors"
 
 /**
  * Trata erros HTTP (4xx, 5xx) da API
- * @throws {ProductsFetchError} Sempre lan�a erro com status e mensagem
+ * @throws {ProductsFetchError} Sempre lança erro com status e mensagem
  */
 function handleHttpError(response: Response, productId: number): never {
   const errorMessage = `Erro ao buscar produto ${productId}: ${response.status} ${response.statusText}`
@@ -16,14 +16,14 @@ function handleHttpError(response: Response, productId: number): never {
 
 /**
  * Trata erros de validação Zod
- * Formata os erros de validação de forma leg�vel antes de lan�ar
- * @throws {ProductsFetchError} Sempre lan�a erro com detalhes da validação
+ * Formata os erros de validação de forma legível antes de lançar
+ * @throws {ProductsFetchError} Sempre lança erro com detalhes da validação
  */
 function handleValidationError(validationError: unknown): never {
   if (validationError instanceof z.ZodError) {
     const errorDetails = formatValidationErrors(validationError)
     throw new ProductsFetchError(
-      `Dados do produto inv�lidos: ${errorDetails}`,
+      `Dados do produto inválidos: ${errorDetails}`,
       undefined,
       validationError
     )
@@ -38,21 +38,18 @@ function handleValidationError(validationError: unknown): never {
  * @throws {ProductsFetchError} Sempre lança erro apropriado ao tipo de falha
  */
 function handleNetworkError(error: unknown): never {
-  // Se já é ProductsFetchError (ex: de handleHttpError), repassa
   if (error instanceof ProductsFetchError) {
     throw error
   }
 
-  // TypeError geralmente indica problemas de rede (fetch falhou)
   if (error instanceof TypeError && error.message.includes('fetch')) {
     throw new ProductsFetchError(
-      'Erro de conex�o. Verifique sua internet e tente novamente.',
+      'Erro de conexão. Verifique sua internet e tente novamente.',
       undefined,
       error
     )
   }
 
-  // Qualquer outro erro inesperado
   throw new ProductsFetchError(
     'Erro inesperado ao carregar produto',
     undefined,

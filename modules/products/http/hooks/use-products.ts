@@ -1,6 +1,9 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchGetAllProducts } from '../products/list'
 import { fetchGetProductById } from '../products/get'
+import { fetchCreateProduct } from '../products/create'
+import { fetchUpdateProduct } from '../products/update'
+import { fetchDeleteProduct } from '../products/delete'
 
 /**
  * Hook customizado para buscar a lista de produtos usando TanStack Query
@@ -44,5 +47,72 @@ export function useGetProductById(productId: number) {
   return useSuspenseQuery({
     queryKey: ['product', productId],
     queryFn: () => fetchGetProductById(productId),
+  })
+}
+
+/**
+ * Hook customizado para criar um novo produto usando TanStack Query Mutation
+ *
+ * Utiliza useMutation que:
+ * - Executa a operação de criação de forma assíncrona
+ * - Gerencia estados de loading, error e success automaticamente
+ * - Permite invalidar queries relacionadas após sucesso
+ * - Suporta callbacks onSuccess, onError, onSettled
+ *
+ * @returns Objeto mutation com mutate, mutateAsync e estados
+ */
+export function useCreateProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: fetchCreateProduct,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+  })
+}
+
+/**
+ * Hook customizado para atualizar um produto existente usando TanStack Query Mutation
+ *
+ * Utiliza useMutation que:
+ * - Executa a operação de atualização de forma assíncrona
+ * - Gerencia estados de loading, error e success automaticamente
+ * - Permite invalidar queries relacionadas após sucesso
+ * - Suporta callbacks onSuccess, onError, onSettled
+ *
+ * @returns Objeto mutation com mutate, mutateAsync e estados
+ */
+export function useUpdateProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: fetchUpdateProduct,
+    onSuccess: (updatedProduct) => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: ['product', updatedProduct.id] })
+    },
+  })
+}
+
+/**
+ * Hook customizado para deletar um produto usando TanStack Query Mutation
+ *
+ * Utiliza useMutation que:
+ * - Executa a operação de deleção de forma assíncrona
+ * - Gerencia estados de loading, error e success automaticamente
+ * - Permite invalidar queries relacionadas após sucesso
+ * - Suporta callbacks onSuccess, onError, onSettled
+ *
+ * @returns Objeto mutation com mutate, mutateAsync e estados
+ */
+export function useDeleteProduct() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (productId: number) => fetchDeleteProduct(productId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
   })
 }

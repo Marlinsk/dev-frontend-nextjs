@@ -1,6 +1,6 @@
 import { memo } from "react"
 import { Button } from "@/components/ui/button"
-import { Heart } from "lucide-react"
+import { Heart, ShoppingCart } from "lucide-react"
 
 interface ProductActionsProps {
   stock: number
@@ -12,10 +12,12 @@ function ProductActionsComponent({ stock }: ProductActionsProps) {
       <Button
         size={"lg"}
         disabled={stock === 0}
+        className="flex-1 sm:flex-initial"
       >
-        {stock === 0
-          ? "Produto Esgotado"
-          : "Adicionar ao Carrinho"}
+        <ShoppingCart className="w-5 h-5 sm:hidden" />
+        <span className="hidden sm:inline">
+          {stock === 0 ? "Produto Esgotado" : "Adicionar ao Carrinho"}
+        </span>
       </Button>
       <Button
         variant={"outline"}

@@ -1,6 +1,6 @@
 'use client'
 
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 import { Filter } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -18,7 +18,23 @@ interface CategoryFilterProps {
 }
 
 function CategoryFilterComponent({ value, onValueChange }: CategoryFilterProps) {
+  const [mounted, setMounted] = useState(false)
   const selectedLabel = CATEGORIES.find(cat => cat.value === value)?.label || 'Filtrar por categoria'
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <div className="w-full sm:w-64">
+        <div className="border-input data-placeholder:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground flex h-9 w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs">
+          <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
+          <span>{selectedLabel}</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full sm:w-64">
