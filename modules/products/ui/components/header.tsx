@@ -1,9 +1,10 @@
 import { memo } from "react"
+import Link from 'next/link'
 
 function HeaderComponent() {
   return (
     <div className="w-full flex justify-center items-center">
-      <h1 className="text-3xl font-medium font-commissioner">ECODEMO</h1>
+      <Link href={"/"} className="text-3xl font-medium font-commissioner">ECODEMO</Link>
     </div>
   )
 }
