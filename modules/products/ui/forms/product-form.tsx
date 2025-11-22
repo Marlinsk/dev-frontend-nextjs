@@ -13,6 +13,7 @@ import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLab
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { formatCurrencyValue, handleCurrencyNumericValue } from "@/helpers/handle-currency-values"
 import { Textarea } from "@/components/ui/textarea"
+import { useRouter } from "next/navigation"
 
 /**
  * Formulário para criação e edição de produtos
@@ -40,6 +41,7 @@ interface ProductFormProps {
 }
 
 function ProductFormComponent({ productId, onSuccess }: ProductFormProps) {
+  const router = useRouter();
   const isEdit = useMemo(() => productId !== "create", [productId]);
 
   let initialData = null;
@@ -83,7 +85,11 @@ function ProductFormComponent({ productId, onSuccess }: ProductFormProps) {
       }
 
       if (onSuccess) {
-        onSuccess();
+        onSuccess()
+      }
+
+      if (!isEdit) {
+        router.push("/")
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Erro ao salvar produto";
