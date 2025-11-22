@@ -1,8 +1,9 @@
 "use client"
 
-import { memo } from "react"
+import { memo, Suspense } from "react"
 import Link from 'next/link'
 import { LayoutDashboard, Package, Settings } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import { AddProduct } from "./add-product"
 
 function HeaderComponent() {
@@ -40,7 +41,9 @@ function HeaderComponent() {
             </Link>
           </nav>
         </div>
-        <AddProduct />
+        <Suspense fallback={<Skeleton className="h-9 w-32" />}>
+          <AddProduct />
+        </Suspense>
       </div>
     </header>
   )

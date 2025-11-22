@@ -1,16 +1,14 @@
 'use client'
 
-import { memo, useCallback } from 'react'
+import { memo, useCallback, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ProductOptionsMenu } from './product-options-menu'
 
 /**
- * Header específico para página de detalhes do produto
- *
- * Exibe botão de voltar, indicador de contexto, e botão de opções de ações.
- * Componente isolado sem dependência do ProductToolbarContext.
+ * Header da página de detalhes do produto
  */
 function ProductDetailsHeaderComponent() {
   const router = useRouter()
@@ -36,7 +34,9 @@ function ProductDetailsHeaderComponent() {
           Detalhes do produto
         </span>
       </div>
-      <ProductOptionsMenu />
+      <Suspense fallback={<Skeleton className="h-9 w-9" />}>
+        <ProductOptionsMenu />
+      </Suspense>
     </div>
   )
 }

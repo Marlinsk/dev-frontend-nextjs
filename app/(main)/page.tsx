@@ -6,20 +6,7 @@ import { fetchGetAllProducts } from '@/modules/products/http/products'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 
 /**
- * Página inicial da aplicação (Home)
- *
- * Estratégia de Server-Side Rendering (SSR) + Suspense:
- * 1. Faz prefetch dos produtos no servidor
- * 2. Hidrata o estado do TanStack Query no cliente via HydrationBoundary
- * 3. ProductCatalog usa um hook customizado com useSuspenseQuery que:
- *    - Consome dados do cache instantaneamente (sem suspender)
- *    - Se cache vazio, suspende e mostra ProductCatalogSkeleton
- *
- * Benefícios:
- * - Dados carregados no servidor (melhor SEO)
- * - Primeira renderização já contém produtos (cache prefetch)
- * - Fallback elegante caso cache não esteja disponível
- * - Integração nativa com modelo de Suspense do React
+ * Página inicial - Lista de produtos com SSR + Suspense
  */
 export default async function Home() {
   const queryClient = getQueryClient()
@@ -31,13 +18,11 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<div className="min-h-[200px]" />}>
-        <ProductToolbarWrapper>
-          <Suspense fallback={<ProductCatalogSkeleton />}>
-            <ProductCatalog />
-          </Suspense>
-        </ProductToolbarWrapper>
-      </Suspense>
+      <ProductToolbarWrapper>
+        <Suspense fallback={<ProductCatalogSkeleton />}>
+          <ProductCatalog />
+        </Suspense>
+      </ProductToolbarWrapper>
     </HydrationBoundary>
   )
 }
