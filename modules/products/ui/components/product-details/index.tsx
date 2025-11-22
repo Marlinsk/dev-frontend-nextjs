@@ -4,49 +4,34 @@ import { useGetProductById } from "@/modules/products/http/hooks";
 import { ProductImage } from "./ui/product-image";
 import { ProductHeader } from "./ui/product-header";
 import { ProductPricing } from "./ui/product-pricing";
-import { ProductActions } from "./ui/product-actions";
 import { ProductDescription } from "./ui/product-description";
-import { ProductFeatures } from "./ui/product-features";
 import { StockIndicator } from "./ui/stock-indicator";
-import { CategorySpecificContent } from "./ui/category-specific-content";
-import { AdditionalInfo } from "./ui/additional-info";
 import { CustomerReviews } from "./ui/customer-reviews";
-import { FaqSection } from "./ui/faq-section";
+import { SalesSummary } from "./ui/sales-summary";
+import { getProductMockData } from "../../../utils/get-product-mock-data";
 
 interface ProductDetailsProps {
   productId: number;
-}
-
-function getProductMockData(productId: number) {
-  const seed = productId * 7;
-
-  return {
-    rating: 3.5 + (seed % 15) / 10,
-    reviewCount: 50 + (seed % 450),
-    discount: seed % 3 === 0 ? 10 + (seed % 30) : 0,
-    stock: seed % 5 === 0 ? seed % 5 : 10 + (seed % 90),
-    freeShipping: seed % 2 === 0,
-    warranty: seed % 3 === 0 ? 12 : seed % 2 === 0 ? 6 : 0,
-  }
 }
 
 export function ProductDetails({ productId }: ProductDetailsProps) {
   const { data } = useGetProductById(productId)
   const mockData = getProductMockData(productId)
 
-  const originalPrice = data.price
-  const discountedPrice = mockData.discount > 0
-    ? originalPrice * (1 - mockData.discount / 100)
-    : originalPrice
-
   return (
     <div className="flex flex-col space-y-9">
       <div className="flex flex-col lg:flex-row gap-9">
-        <ProductImage
-          image={data.image}
-          title={data.title}
-          discount={mockData.discount}
-        />
+        <div className="flex flex-col w-full lg:w-[500px] shrink-0 space-y-7">
+          <ProductImage
+            image={data.image}
+            title={data.title}
+          />
+          <div className="hidden lg:block">
+            <ProductDescription
+              description={data.description}
+            />
+          </div>
+        </div>
         <div className="flex-1 flex flex-col space-y-5">
           <ProductHeader
             category={data.category}
@@ -54,35 +39,41 @@ export function ProductDetails({ productId }: ProductDetailsProps) {
             rating={mockData.rating}
             reviewCount={mockData.reviewCount}
           />
+          <div className="block lg:hidden">
+            <ProductDescription
+              description={data.description}
+            />
+          </div>
+          <SalesSummary
+            totalSales={mockData.totalSales}
+            monthlySales={mockData.monthlySales}
+            weeklySales={mockData.weeklySales}
+            conversionRate={mockData.conversionRate}
+            returnRate={mockData.returnRate}
+            viewsCount={mockData.viewsCount}
+            cartAdditions={mockData.cartAdditions}
+          />
           <ProductPricing
-            discountedPrice={discountedPrice}
-            originalPrice={originalPrice}
-            hasDiscount={mockData.discount > 0}
+            price={data.price}
+            revenue={mockData.revenue}
+            monthlyRevenue={mockData.monthlyRevenue}
+            costPrice={mockData.costPrice}
+            profitMargin={mockData.profitMargin}
+            avgOrderValue={mockData.avgOrderValue}
           />
-          <StockIndicator 
-            stock={mockData.stock} 
-          />
-          <CategorySpecificContent 
-            category={data.category} 
-          />
-          <ProductActions 
-            stock={mockData.stock} 
-          />
-          <ProductFeatures
-            freeShipping={mockData.freeShipping}
-            warranty={mockData.warranty}
-          />
-          <ProductDescription 
-            description={data.description} 
+          <StockIndicator
+            stock={mockData.stock}
+            reservedStock={mockData.reservedStock}
+            minStock={mockData.minStock}
+            lastRestock={mockData.lastRestock}
+            avgDailySales={mockData.avgDailySales}
           />
         </div>
       </div>
-      <AdditionalInfo />
       <CustomerReviews
         rating={mockData.rating}
         reviewCount={mockData.reviewCount}
       />
-      <FaqSection />
     </div>
   );
 }
