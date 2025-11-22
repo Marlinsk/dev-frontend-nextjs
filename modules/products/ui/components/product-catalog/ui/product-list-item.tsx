@@ -3,12 +3,16 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 import { Product } from '../../../../types/product'
+import { RatingStars } from '../../rating-stars'
+import { getProductMockData } from '../../../../utils/get-product-mock-data'
 
 interface ProductListItemProps {
   product: Product;
 }
 
 function ProductListItemComponent({ product }: ProductListItemProps) {
+  const mockData = getProductMockData(product.id)
+
   return (
     <Link
       href={`/product/${product.id}/details`}
@@ -34,12 +38,23 @@ function ProductListItemComponent({ product }: ProductListItemProps) {
             ${product.price.toFixed(2)}
           </span>
         </div>
+        <RatingStars
+          rating={mockData.rating}
+          reviewCount={mockData.reviewCount}
+          size="sm"
+        />
 
         <p className="line-clamp-2 text-xs text-muted-foreground">
           {product.description}
         </p>
 
-        <div className="mt-auto pt-2">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          <span>{mockData.totalSales} vendas</span>
+          <span className="h-1 w-1 rounded-full bg-muted-foreground" />
+          <span>{mockData.stock} em estoque</span>
+        </div>
+
+        <div className="mt-auto pt-2 space-y-2">
           <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
             {product.category}
           </span>

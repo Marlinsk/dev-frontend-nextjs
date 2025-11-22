@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useCallback, useTransition, useDeferredValue, type ReactNode } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 
 interface ProductToolbarContextValue {
   searchQuery: string;
@@ -17,43 +17,30 @@ interface ProductToolbarProviderProps {
   children: ReactNode;
   initialSearchQuery?: string;
   initialCategory?: string;
+  searchParamsString?: string;
 }
 
 /**
  * Provider de contexto para toolbar de produtos
- *
- * Gerencia estado compartilhado entre ProductToolbar (no layout) e ProductCatalog
- * Responsabilidades:
- * - Gerenciar estado de filtros (categoria e busca)
- * - Sincronizar estado com URL
- * - Otimizações de performance (useTransition, useDeferredValue)
  */
 export function ProductToolbarProvider({
   children,
   initialSearchQuery = '',
-  initialCategory = 'all'
+  initialCategory = 'all',
+  searchParamsString = ''
 }: ProductToolbarProviderProps) {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
-  // Estados de filtros
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const searchQuery = initialSearchQuery
-
-  // useTransition: permite marcar atualizações de estado como "não urgentes"
   const [isPending, startTransition] = useTransition()
-
-  // useDeferredValue: cria versão "atrasada" do valor que só atualiza quando UI está livre
   const deferredCategory = useDeferredValue(selectedCategory)
 
-  // useCallback: memoriza função para evitar recriações desnecessárias
-  // startTransition marca esta atualização como baixa prioridade
   const handleCategoryChange = useCallback((value: string) => {
     startTransition(() => {
       setSelectedCategory(value)
 
-      // Atualiza URL com nova categoria
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(searchParamsString)
 
       if (value === 'all') {
         params.delete('category')
@@ -64,7 +51,7 @@ export function ProductToolbarProvider({
       const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname
       router.replace(newUrl, { scroll: false })
     })
-  }, [router, searchParams])
+  }, [router, searchParamsString])
 
   const value: ProductToolbarContextValue = {
     searchQuery,
@@ -83,7 +70,6 @@ export function ProductToolbarProvider({
 
 /**
  * Hook para acessar o contexto de toolbar de produtos
- * Lança erro se usado fora do ProductToolbarProvider
  */
 export function useProductToolbar() {
   const context = useContext(ProductToolbarContext)

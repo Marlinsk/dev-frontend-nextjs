@@ -43,9 +43,7 @@ function ProductFormDialogComponent({
     return {
       isEdit,
       title: isEdit ? "Editar Produto" : "Cadastrar Produto",
-      description: isEdit
-        ? "Atualize os dados do produto por aqui."
-        : "Adicione um novo produto no catálogo da loja por aqui."
+      description: isEdit ? "Atualize os dados do produto por aqui." : "Adicione um novo produto no catálogo da loja por aqui."
     }
   }, [productId])
 
@@ -61,7 +59,6 @@ function ProductFormDialogComponent({
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        {/* Renderiza form apenas quando dialog está aberto para otimizar performance */}
         {open && (
           <div className="mt-4">
             <ProductForm
