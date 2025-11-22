@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Commissioner } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import Providers from "@/providers";
 import "./globals.css";
 
@@ -10,11 +10,6 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const commissioner = Commissioner({
-  variable: "--font-commissioner",
   subsets: ["latin"],
 });
 
@@ -31,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${commissioner.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
           {children}
