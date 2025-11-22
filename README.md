@@ -1,8 +1,6 @@
-# ECO - E-commerce Demo Platform
+# ECO - Sistema de Gestão de E-commerce
 
-E-commerce de demonstração desenvolvido com Next.js 16, React 19 e TanStack Query, implementando CRUD completo de produtos com consumo da FakeStore API.
-
-**📖 [Manual de Utilização da Aplicação](INSTRUCTIONS.md#-manual-de-utilização-da-aplicação)** - Guia completo de como usar todas as funcionalidades da aplicação.
+Sistema de gestão para e-commerce desenvolvido com Next.js 16, React 19 e TanStack Query, permitindo o gerenciamento completo de produtos (CRUD) com integração à FakeStore API.
 
 ## Stack Tecnológico
 
