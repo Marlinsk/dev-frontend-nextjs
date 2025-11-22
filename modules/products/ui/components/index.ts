@@ -7,6 +7,7 @@ export { ProductsHeader } from './products-header'
 export { ProductToolbar } from './product-toolbar'
 export { ProductToolbarWrapper } from './product-toolbar-wrapper'
 export { ProductHeaderInfo } from './product-header-info'
+export { ProductDetailsHeader } from './product-details-header'
 
 // Form components
 export { ProductFormDialog } from './product-form-dialog'

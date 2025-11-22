@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { ProductCatalog } from '@/modules/products/ui/components'
+import { ProductCatalog, ProductToolbarWrapper } from '@/modules/products/ui/components'
 import { ProductCatalogSkeleton } from '@/modules/products/ui/loading'
 import { getQueryClient } from '@/function/get-query-client'
 import { fetchGetAllProducts } from '@/modules/products/http/products'
@@ -31,8 +31,12 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<ProductCatalogSkeleton />}>
-        <ProductCatalog />
+      <Suspense fallback={<div className="min-h-[200px]" />}>
+        <ProductToolbarWrapper>
+          <Suspense fallback={<ProductCatalogSkeleton />}>
+            <ProductCatalog />
+          </Suspense>
+        </ProductToolbarWrapper>
       </Suspense>
     </HydrationBoundary>
   )

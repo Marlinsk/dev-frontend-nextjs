@@ -3,7 +3,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 import { getQueryClient } from "@/function/get-query-client";
 import { fetchGetProductById } from "@/modules/products/http/products";
-import { ProductDetails } from "@/modules/products/ui/components";
+import { ProductDetails, ProductDetailsHeader } from "@/modules/products/ui/components";
 import { ProductDetailsSkeleton } from "@/modules/products/ui/loading";
 
 interface ProductDetailsPageParams {
@@ -13,7 +13,7 @@ interface ProductDetailsPageParams {
 export default async function ProductDetailsPage({ params }: ProductDetailsPageParams) {
   const { id } = await params;
   const queryClient = getQueryClient();
-  
+
   await queryClient.prefetchQuery({
     queryKey: ['products', id],
     queryFn: () => fetchGetProductById(Number(id)),
@@ -21,6 +21,7 @@ export default async function ProductDetailsPage({ params }: ProductDetailsPageP
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProductDetailsHeader />
       <Suspense fallback={<ProductDetailsSkeleton />}>
         <ProductDetails productId={Number(id)} />
       </Suspense>
