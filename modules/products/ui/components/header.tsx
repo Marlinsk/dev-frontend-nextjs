@@ -1,7 +1,9 @@
 "use client"
 
-import { memo, Suspense } from "react"
 import Link from 'next/link'
+import { memo, Suspense } from "react"
+import Image from 'next/image'
+
 import { LayoutDashboard, Package, Settings } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AddProduct } from "./add-product"
@@ -13,9 +15,10 @@ function HeaderComponent() {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="flex items-center gap-2 text-2xl font-light hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
           >
-            ECODEMO
+            <Image src={'/compass-rose-svgrepo-com.svg'} width={28} height={28} alt={'Logo'} />
+            <p className="text-2xl font-light">ECODEMO</p>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             <Link
