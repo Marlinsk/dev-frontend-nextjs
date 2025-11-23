@@ -36,13 +36,14 @@ describe('CategoryFilter', () => {
     expect(trigger).toBeInTheDocument()
   })
 
-  it('should have correct width classes', () => {
-    const { container } = renderWithProviders(
+  it('should render the select trigger element', () => {
+    renderWithProviders(
       <CategoryFilter value="all" onValueChange={mockOnValueChange} />
     )
 
-    const wrapper = container.firstChild
-    expect(wrapper).toHaveClass('w-full', 'sm:w-64')
+    const trigger = screen.getByRole('combobox')
+    expect(trigger).toBeInTheDocument()
+    expect(trigger).toBeVisible()
   })
 
   it('should reflect controlled value prop', () => {

@@ -37,23 +37,21 @@ function CategoryFilterComponent({ value, onValueChange }: CategoryFilterProps) 
   }
 
   return (
-    <div className="w-full sm:w-64">
-      <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger>
-          <Filter className="h-4 w-4 mr-2" />
-          <SelectValue>
-            {selectedLabel}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent>
-          {CATEGORIES.map((category) => (
-            <SelectItem key={category.value} value={category.value}>
-              {category.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger>
+        <Filter className="h-4 w-4 mr-2" />
+        <SelectValue>
+          {selectedLabel}
+        </SelectValue>
+      </SelectTrigger>
+      <SelectContent>
+        {CATEGORIES.map((category) => (
+          <SelectItem key={category.value} value={category.value}>
+            {category.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   )
 }
 

@@ -5,7 +5,6 @@ import { useQuery } from '@tanstack/react-query'
 
 import { ProductSearch } from './product-search'
 import { CategoryFilter } from './category-filter'
-import { ProductOptionsMenu } from './product-options-menu'
 import { fetchGetAllProducts } from '@/modules/products/http/products'
 import { useProductToolbar } from '@/modules/products/context'
 
@@ -37,7 +36,7 @@ function ProductToolbarComponent() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-3 lg:gap-4 justify-between w-full">
-      <div className="flex flex-col sm:flex-row gap-3 w-full lg:max-w-3xl">
+      <div className="flex flex-col sm:flex-row sm:justify-between gap-3 w-full">
         <ProductSearch
           products={filteredProductsForSuggestions}
           value={searchQuery}
@@ -46,9 +45,6 @@ function ProductToolbarComponent() {
           value={selectedCategory}
           onValueChange={handleCategoryChange}
         />
-      </div>
-      <div className="flex justify-end lg:justify-start">
-        <ProductOptionsMenu />
       </div>
     </div>
   )
